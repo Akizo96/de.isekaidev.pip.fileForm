@@ -1,2 +1,2 @@
 # PIP: FileForm
-This plugin is in a experimental stage.
+This plugin is in a beta stage.
