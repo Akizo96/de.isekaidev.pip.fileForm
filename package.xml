@@ -6,7 +6,7 @@
         <packagedescription language="de"><![CDATA[Integriert ein PackageInstallationPlugin das einem Entwickler erlaubt eine Form während der Installation seines Plugins anzuzeigen.]]></packagedescription>
         <packagedescription language="en"><![CDATA[Integrates a PackageInstallationPlugin that allows a developer to create a file with options that gets filled from the user at the installation]]></packagedescription>
         <version>1.0.0</version>
-        <date>2017-10-23</date>
+        <date>2017-10-24</date>
     </packageinformation>
 
     <authorinformation>
