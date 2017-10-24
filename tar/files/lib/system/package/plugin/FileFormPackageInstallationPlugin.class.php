@@ -38,6 +38,12 @@ class FileFormPackageInstallationPlugin implements IPackageInstallationPlugin {
     protected $fileName = null;
 
     /**
+     * should the form get shown on a plugin update
+     * @var string
+     */
+    protected $showOnUpdate = false;
+
+    /**
      * sets how the content of the file looks like
      *   0  = declares constants
      *   1  = declares normal variables
@@ -81,6 +87,8 @@ class FileFormPackageInstallationPlugin implements IPackageInstallationPlugin {
         $xpath = $xml->xpath();
 
         $this->formName = ($xpath->query('/ns:form/attribute::name'))->item(0)->nodeValue;
+        $update = $xpath->query('/ns:form/attribute::showOnUpdate');
+        $this->showOnUpdate = $update->length > 0 ? (bool)$update->item(0)->nodeValue : false;
         $this->fileName = ($xpath->query('/ns:form/ns:filename'))->item(0)->nodeValue;
         $this->fileType = ($xpath->query('/ns:form/ns:filetype'))->item(0)->nodeValue;
         $fields = $xpath->query('/ns:form/ns:fields/ns:field');
@@ -111,6 +119,9 @@ class FileFormPackageInstallationPlugin implements IPackageInstallationPlugin {
         }
 
         if ($this->installation->getAction() == 'update') {
+            if (!$this->showOnUpdate) {
+                return null;
+            }
             $fileForm = new FileForm($this->fileName);
             if ($fileForm->fileName != null) {
                 if (file_exists(WCF_DIR . $fileForm->fileName)) {
@@ -132,6 +143,7 @@ class FileFormPackageInstallationPlugin implements IPackageInstallationPlugin {
                         }
                     }
                 }
+                FileFormEditor::deleteAll([$fileForm->getObjectID()]);
             }
         }
 
@@ -209,6 +221,7 @@ class FileFormPackageInstallationPlugin implements IPackageInstallationPlugin {
 
             FileUtil::makeWritable(WCF_DIR . $this->fileName);
             WCF::resetZendOpcache(WCF_DIR . $this->fileName);
+            return null;
         }
     }
 
@@ -261,7 +274,7 @@ class FileFormPackageInstallationPlugin implements IPackageInstallationPlugin {
      */
     public function update() {
         EventHandler::getInstance()->fireAction($this, 'update');
-        $this->install();
+        return $this->install();
     }
 
     /**
